@@ -1,0 +1,259 @@
+@model IEnumerable<sbsa_vend_mach.Models.Product>
+@{
+    ViewBag.title ="Index";
+    //Layout = null;
+    
+}
+
+<style>
+    
+    .loader{
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: url('//upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Phi_fenomeni.gif/50px-Phi_fenomeni.gif') 
+              50% 50% no-repeat rgb(249,249,249);
+}
+
+</style>
+
+
+<div  id="" class=" table-responsive ">
+   
+    <table class="table table-striped">
+        <h1 style="align-content: center;">Take a Break</h1>
+        <tr class="thead-dark">
+            <th>#</th>
+            <th>Select Product</th>
+            <th>Available | <button type="button" id="refresh" class="btn btn-primary" > Refresh</button></th>
+            <th>Price</th>
+        </tr>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td type="hidden" id="@("box" + @item.productID)"></td>
+                <td><label class="btn btn-warning"><input type="radio"  name="prod" id="@("box" + item.name)" value="@(item.name)">@item.name</label></td>
+                <td> @item.quantity</td>
+                <td>R <input type="number" id="@("price" + item.name )" value="@(item.price)" readonly></td>
+            </tr>
+            
+        }
+        </tbody>
+    </table>
+    
+</div>
+<br>
+<hr>
+<br>
+<div >
+    
+    <table class="table table-striped table-responsive">
+        <h3>Insert Coins or Note.</h3>
+        <tr class="thead-dark">
+            
+            <th>R <input type="number" id="coins" value="0" readonly/></th>
+            <th></th>
+            <th></th>
+           
+        </tr>
+        <tbody>
+            <tr>
+                <td><button type="button" class="btn btn-primary" id="mm1" value="1">R 1</button></td>
+                <td><button type="button" class="btn btn-primary" id="mm2" value="2">R 2</button></td>
+                <td><button type="button" class="btn btn-primary" id="mm5" value="5">R 5</button></td>
+            </tr>
+            <tr>
+                <td><button type="button" class="btn btn-primary" id="mm10" value="10">R 10</button></td>
+                <td><button type="button" class="btn btn-primary" id="mm20" value="20">R 20</button></td>
+                <td><button type="button" class="btn btn-primary" id="mm50" value="50">R 50</button></td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+</div>
+
+<div id="load" style="text-align: center; display: none; width: 200px; max-height: 200px;" class="loader" >
+    
+</div>
+
+<button id="purchase" class="btn btn-success">Purchase</button>
+<button id="change" class="btn btn-danger">Return Change</button>
+
+@section MyScripts{
+    <script type="text/javascript"> 
+
+           
+                $('#refresh').click(function () {
+                    $('#load').delay(1000).show(0);;
+                    location.reload(true); 
+                    
+                });
+            
+
+           
+            $("#mm1").click(function(event) { 
+               var a = parseInt($("#coins").val());
+               var b = parseInt($("#mm1").val());
+               //alert(a);
+                var tot = a + b;
+                $('#coins').val(tot); 
+            }); 
+
+            $("#mm2").click(function(event) { 
+               var a = parseInt($("#coins").val());
+               var b = parseInt($("#mm2").val());
+               //alert(a);
+                var tot = a + b;
+                $('#coins').val(tot); 
+            }); 
+            $("#mm5").click(function(event) { 
+               var a = parseInt($("#coins").val());
+               var b = parseInt($("#mm5").val());
+               //alert(a);
+                var tot = a + b;
+                $('#coins').val(tot); 
+            }); 
+
+            $("#mm10").click(function(event) { 
+               var a = parseInt($("#coins").val());
+               var b = parseInt($("#mm10").val());
+               //alert(a);
+                var tot = a + b;
+                $('#coins').val(tot); 
+            }); 
+
+            $("#mm20").click(function(event) { 
+               var a = parseInt($("#coins").val());
+               var b = parseInt($("#mm20").val());
+               //alert(a);
+                var tot = a + b;
+                $('#coins').val(tot); 
+            }); 
+
+            $("#mm50").click(function(event) { 
+               var a = parseInt($("#coins").val());
+               var b = parseInt($("#mm50").val());
+              // alert(a);
+                var tot = a + b;
+                $('#coins').val(tot); 
+            }); 
+
+            $("#change").click(function(event) { 
+               var a = parseInt($("#coins").val());
+               //var b = parseInt($("#mm50").val());
+                alert("Thank you for your suport: Your Change R " + a);
+                var tot = 0;
+                $('#coins').val(tot); 
+            }); 
+ 
+
+            $("#purchase").click(function(event) { 
+              
+              var amt = parseInt($("#coins").val());
+              var prod = $("input[name='prod']:checked").val();
+              var prodPrice = parseInt($("#coins").val());
+
+
+                 var Product = {  
+                    name: prod,
+                    price : prodPrice,
+                   
+                    }
+
+
+                if(prod == "Coke")
+                {
+                    //alert("Coke here")
+                    var price = parseInt($("#priceCoke").val());
+                    //alert(price);
+
+                    //verify quantity of product
+                    if(amt >= price)
+                    {
+                        var remain = amt - price;
+                        $('#coins').val(remain);
+
+                                $.ajax({  
+                                type: "post",  
+                                url: "/Machine/Index",  
+                                data: Product,
+                                datatype: "json",  
+                                cache: false,  
+                                success: function(data) {  
+                                    alert("View Model Passed Successfully");  
+                                },  
+                                error: function(xhr) {  
+                                    alert('No Valid Data');  
+                                }  
+
+                            }); 
+
+
+                    }
+
+
+                }else if(prod == "Chocolate"){
+                    //alert("Chocolate Here")
+                    var price = parseInt($("#priceChocolate").val());
+                    //alert(price);
+                     if(amt >= price)
+                    {
+                        var remain = amt - price;
+                        $('#coins').val(remain);
+
+                        $.ajax({  
+                                type: "post",  
+                                url: "/Machine/Index",  
+                                data: Product,
+                                datatype: "json",  
+                                cache: false,  
+                                success: function(data) {  
+                                    alert("View Model Passed Successfully");  
+                                },  
+                                error: function(xhr) {  
+                                    alert('No Valid Data');  
+                                }  
+
+                            }); 
+   
+                    }
+                    
+
+                }else if(prod == "Chips"){
+                    
+                    //alert("Chips Here")
+                    var price = parseInt($("#priceChips").val());
+                    //alert(price);
+                     if(amt >= price)
+                    {
+                        var remain = amt - price;
+                        $('#coins').val(remain);
+
+                        $.ajax({  
+                                type: "post",  
+                                url: "/Machine/Index",  
+                                data: Product,
+                                datatype: "json",  
+                                cache: false,  
+                                success: function(data) {  
+                                    alert("View Model Passed Successfully");  
+                                },  
+                                error: function(xhr) {  
+                                    alert('No Valid Data');  
+                                }  
+
+                            }); 
+   
+                    }
+                }     
+            
+            }); 
+
+    </script> 
+}
+
